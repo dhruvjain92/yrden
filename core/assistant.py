@@ -27,6 +27,7 @@ def ask(text, severity=""):
 
 def run(exception):
     speak(exception, "error")
+    exit()
 
 
 def confirm(text, severity=""):

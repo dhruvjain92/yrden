@@ -1,13 +1,14 @@
 import yaml
 
 from core.assistant import run
+from core.plugcore import PlugCore
 from core.responders.aws.aws import AWS_Responder
 
 
 class Command_Center:
 
-    AZURE_PROVIDER = 1
-    AWS_PROVIDER = 2
+    AZURE_PROVIDER = 2
+    AWS_PROVIDER = 1
     SELECTED_PROVIDER = -1
     IR_LIST = "./core/incidents/list.yaml"
 
@@ -22,9 +23,9 @@ class Command_Center:
         with open(self.IR_LIST, "r") as stream:
             try:
                 incidents_list = yaml.safe_load(stream)["incidents"]
-                if self.SELECTED_PROVIDER == 1:
+                if self.SELECTED_PROVIDER == self.AZURE_PROVIDER:
                     shortlisted_incidents = incidents_list["azure"]
-                elif self.SELECTED_PROVIDER == 2:
+                elif self.SELECTED_PROVIDER == self.AWS_PROVIDER:
                     shortlisted_incidents = incidents_list["aws"]
             except yaml.YAMLError as exc:
                 raise Exception(exc)
@@ -36,3 +37,7 @@ class Command_Center:
     def check_provider(self):
         if self.SELECTED_PROVIDER == -1:
             raise Exception("No provider selected")
+
+    def load_plugin(self, plugin_name, format):
+        plugcore = PlugCore(plugin_name, format)
+        plugcore.load_plugin()

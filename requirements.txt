@@ -1,5 +1,7 @@
 click
 typer
-awscli
-yaml
+pyyaml
 boto3
+configobj
+cdktf
+constructs

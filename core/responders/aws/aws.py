@@ -3,9 +3,7 @@ import importlib
 from importlib.util import find_spec
 import sys
 from core.assistant import *
-import boto3
 from core.incidents.IIResponse import IIResponse
-
 from core.responders.aws.AWS_Functions import AWS_Functions
 
 

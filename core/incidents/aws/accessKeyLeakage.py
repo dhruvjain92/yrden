@@ -1,4 +1,5 @@
 import boto3
+from core.assistant import ask, confirm, run, speak
 
 from core.incidents.IIResponse import IIResponse
 from core.responders.aws.AWS_Functions import AWS_Functions
@@ -40,4 +41,53 @@ class accessKeyLeakage(IIResponse):
         """
 
     def start_response(self, aws: AWS_Functions):
-        aws.get_user_access_keys("dhruv.jain")
+        target = ""
+        if self.REQUIRED_VALUES[0]["value"] == "1":
+            target = ask(
+                "What is the username of the person whose key you want to revoke?"
+            )
+            access_keys = aws.get_user_access_keys(target)
+            if confirm(
+                "Are you sure you want to disable the keys for " + target, "error"
+            ):
+                for key in access_keys["AccessKeyMetadata"]:
+                    self.revoke_key(aws, key["AccessKeyId"], target)
+                self.remove_older_sessions(aws, target)
+                self.explicit_deny(aws, target)
+            else:
+                run("User cancelled the action.")
+        else:
+            access_key_id = ask("What is the Access Key ID?")
+            speak("Finding user of the access key")
+            access_key_details = aws.get_access_key_details(access_key_id)
+            if access_key_details["user_name"] != "":
+                run("We couldn't find the access key in our records.")
+            else:
+                target = access_key_details["user_name"]
+                if confirm(
+                    "This Access key belongs to "
+                    + access_key_details["user_name"]
+                    + "Please confirm the revoke."
+                ):
+                    self.revoke_key(aws, access_key_id, target)
+                    self.remove_older_sessions(aws, target)
+                    self.explicit_deny(aws, target)
+                else:
+                    run("User cancelled the action.")
+            print(access_key_details)
+
+    def revoke_key(self, aws: AWS_Functions, access_key_id, target):
+        speak("Disabling key: " + access_key_id + " for " + target, "warning")
+        aws.make_access_key_inactive(target, access_key_id)
+        speak("Key has been marked inactive", "info")
+
+    def explicit_deny(self, aws: AWS_Functions, target):
+        if self.REQUIRED_VALUES[1]["value"]:
+            speak("Adding explicit deny for the user", "warning")
+            aws.add_explicit_deny(target)
+            speak("Explicit Deny has been added to the target", "error")
+
+    def remove_older_sessions(self, aws: AWS_Functions, target):
+        speak("Removing older sessions by attaching policy", "warning")
+        aws.revoke_older_sessions(target)
+        speak("Older sessions have been revoked", "info")
