@@ -3,5 +3,3 @@ typer
 pyyaml
 boto3
 configobj
-cdktf
-constructs

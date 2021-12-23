@@ -25,6 +25,10 @@ class IPlugin(ABC):
     def execute(self):
         pass
 
+    @abstractmethod
+    def description(self):
+        pass
+
     def __init__(self, req, format):
         self.requirements = req
         self.output_format = format

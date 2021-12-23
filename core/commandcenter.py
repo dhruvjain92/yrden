@@ -1,7 +1,7 @@
 import yaml
 
-from core.assistant import run
-from core.plugcore import PlugCore
+from core.assistant import ask, run
+from core.plugin.plugcore import PlugCore
 from core.responders.aws.aws import AWS_Responder
 
 
@@ -38,6 +38,9 @@ class Command_Center:
         if self.SELECTED_PROVIDER == -1:
             raise Exception("No provider selected")
 
-    def load_plugin(self, plugin_name, format):
-        plugcore = PlugCore(plugin_name, format)
-        plugcore.load_plugin()
+    def load_plugin(self, plugin_name: str, format):
+        plugin_arr = plugin_name.split(",")
+        profile = ask("Select your AWS profile", "warning")
+        for plugin in plugin_arr:
+            plugcore = PlugCore(plugin, format, profile)
+            plugcore.load_plugin()

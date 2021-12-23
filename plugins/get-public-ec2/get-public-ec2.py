@@ -1,5 +1,5 @@
 import json
-from core.IPlugin import IPlugin
+from core.plugin.IPlugin import IPlugin
 from core.assistant import speak
 import boto3
 from prettytable import PrettyTable
@@ -7,7 +7,6 @@ from prettytable import PrettyTable
 
 class get_public_ec2(IPlugin):
     def execute(self):
-        ec2_id = self.get_req_value("ec2")
         client = boto3.client("ec2")
         instance_dict = client.describe_instances().get("Reservations")
         instance_data = []
@@ -32,3 +31,7 @@ class get_public_ec2(IPlugin):
             output_table.field_names = ["Instance ID", "Public IP Address"]
             output_table.add_rows(instance_data)
             speak(output_table)
+
+    def description(self):
+        return """This plugin returns the public EC2 instances and their associated Public IP
+        Created by: Dhruv Jain"""
