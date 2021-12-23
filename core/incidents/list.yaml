@@ -1,0 +1,16 @@
+---
+incidents:
+  aws:
+  - display_name: Access Key Leakage
+    key: accessKeyLeakage
+    file: accessKeyLeakage
+  - display_name: EC2 Compromised
+    key: ec2Compromised
+    file: ec2Compromised
+  azure:
+  - display_name: Access Key Leakage
+    key: accessKeyLeakage
+    file: accessKeyLeakage
+  - display_name: EC2 Compromised
+    key: ec2Compromised
+    file: ec2Compromised

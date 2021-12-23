@@ -1,0 +1,5 @@
+click
+typer
+pyyaml
+boto3
+configobj
