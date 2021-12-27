@@ -1,6 +1,5 @@
 from core.plugin.IPlugin import IPlugin
-from core.assistant import *
-from core.responders.aws.AWS_Functions import AWS_Functions
+from core.assistant import speak, ask
 import importlib
 from os.path import exists
 import yaml

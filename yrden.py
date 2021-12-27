@@ -1,4 +1,3 @@
-from core.assistant import *
 from core.handler import Handler
 import typer
 

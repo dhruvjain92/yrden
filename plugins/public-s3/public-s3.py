@@ -1,10 +1,8 @@
 import json
 from core.plugin.IPlugin import IPlugin
-from core.assistant import ask, speak
+from core.assistant import speak
 import boto3
 from prettytable import PrettyTable
-import re
-import botocore
 
 
 class public_s3(IPlugin):
@@ -12,7 +10,7 @@ class public_s3(IPlugin):
         s3 = boto3.resource("s3")
         if self.output_format != "file":
             speak("Checking for Public Buckets", "warning")
-        buckets = ["logistics-uploads-stage \n", "grofers-consumer-lego \n"]
+        buckets = []
         for bucket in s3.buckets.all():
             bucket_name = bucket.name
             if self.AWS.check_public_bucket(bucket_name):
@@ -22,6 +20,13 @@ class public_s3(IPlugin):
                     buckets.append(bucket_name)
         if self.output_format == "file":
             self.write_to_file(buckets)
+        elif self.output_format == "json":
+            speak(json.dumps(buckets, indent=2, sort_keys=True))
+        else:
+            output_table = PrettyTable()
+            output_table.field_names = ["Bucket Name"]
+            output_table.add_rows(buckets)
+            speak(output_table)
 
     def description(self):
         return """This plugin finds the public S3 buckets

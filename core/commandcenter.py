@@ -1,6 +1,6 @@
 import yaml
 
-from core.assistant import ask, run
+from core.assistant import ask
 from core.plugin.plugcore import PlugCore
 from core.responders.aws.aws import AWS_Responder
 

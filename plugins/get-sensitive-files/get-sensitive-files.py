@@ -1,10 +1,9 @@
 import json
 from core.plugin.IPlugin import IPlugin
-from core.assistant import ask, speak
+from core.assistant import speak
 import boto3
 from prettytable import PrettyTable
 import re
-from datetime import datetime
 
 
 class get_sensitive_files(IPlugin):
@@ -15,7 +14,6 @@ class get_sensitive_files(IPlugin):
         s3 = boto3.client("s3")
         paginator = s3.get_paginator("list_objects_v2")
         bucket_name = self.get_req_value("bucketName")
-        # bucket_name = "grofers-stage-consumer-webcdn"
         pages = paginator.paginate(Bucket=bucket_name)
         count = 0
         files = []
