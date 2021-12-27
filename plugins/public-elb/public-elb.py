@@ -43,6 +43,9 @@ class public_elb(IPlugin):
                     )
         if self.output_format == "json":
             speak(json.dumps(elb_list, indent=2, sort_keys=True))
+        elif self.output_format == "file":
+            self.write_to_file(elb_list)
+            speak("File with output: " + self.output_file, "info")
         else:
             output_table = PrettyTable()
             output_table.field_names = [
@@ -68,5 +71,6 @@ class public_elb(IPlugin):
         return is_port_open
 
     def description(self):
-        return """This plugin returns the public ELBs, their DNS names, Listeners and whether we were able to reach those ELBs using sockets
+        return """This plugin returns the public ELBs, their DNS names, 
+        Listeners and whether we were able to reach those ELBs using sockets
         Created by: Dhruv Jain"""

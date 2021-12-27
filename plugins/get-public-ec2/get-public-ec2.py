@@ -26,6 +26,9 @@ class get_public_ec2(IPlugin):
                         )
         if self.output_format == "json":
             speak(json.dumps(instance_data, indent=2, sort_keys=True))
+        elif self.output_format == "file":
+            self.write_to_file(instance_data)
+            speak("File with output: " + self.output_file, "info")
         else:
             output_table = PrettyTable()
             output_table.field_names = ["Instance ID", "Public IP Address"]

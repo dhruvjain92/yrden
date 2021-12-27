@@ -1,6 +1,4 @@
-import boto3
 from core.assistant import ask, confirm, run, speak
-
 from core.incidents.IIResponse import IIResponse
 from core.responders.aws.AWS_Functions import AWS_Functions
 

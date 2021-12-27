@@ -1,6 +1,6 @@
 import boto3
 from datetime import datetime
-
+import botocore
 import typer
 from core.configuration.config import check_test_mode
 import json
@@ -24,14 +24,14 @@ class AWS_Functions:
         return result
 
     def make_access_key_inactive(self, username, key_id):
-        if self.test_mode == False:
+        if not self.test_mode:
             iam = boto3.client("iam")
             iam.update_access_key(
                 UserName=username, AccessKeyId=key_id, Status="Inactive"
             )
 
     def revoke_older_sessions(self, username):
-        if self.test_mode == False:
+        if not self.test_mode:
             iam = boto3.client("iam")
             current_time = datetime.utcnow().isoformat()
             revoke_policy_json = {
@@ -65,7 +65,7 @@ class AWS_Functions:
                 )
 
     def add_explicit_deny(self, username):
-        if self.test_mode == False:
+        if not self.test_mode:
             iam = boto3.client("iam")
             revoke_policy_json = {
                 "Version": "2012-10-17",
@@ -85,7 +85,7 @@ class AWS_Functions:
     def get_access_key_details(self, access_key_id):
         access_key_details = {}
         access_key_details["user_name"] = ""
-        if self.test_mode == False:
+        if not self.test_mode:
             iam = boto3.client("iam")
             users = []
             pages = self.get_all_users(iam)
@@ -109,4 +109,33 @@ class AWS_Functions:
 
     def get_all_users(self, iam):
         paginator = iam.get_paginator("list_users")
-        page_iterator = paginator.paginate()
+        return paginator.paginate()
+
+    def check_public_bucket(self, bucket_name):
+        client = boto3.client("s3")
+        bucket_public = False
+        try:
+            response = client.get_public_access_block(Bucket=bucket_name)
+            if not (
+                response["PublicAccessBlockConfiguration"]["BlockPublicAcls"]
+                and response["PublicAccessBlockConfiguration"]["BlockPublicPolicy"]
+            ):
+                bucket_public = True
+        except botocore.exceptions.ClientError as e:
+            bucket_public = False
+        if not bucket_public:
+            try:
+                response = client.get_bucket_policy_status(Bucket=bucket_name)
+                bucket_public = response["PolicyStatus"]["IsPublic"]
+            except botocore.exceptions.ClientError as e:
+                bucket_public = False
+        if not bucket_public:
+            grants = client.get_bucket_acl(Bucket=bucket_name).get("Grants")
+            for grant in grants:
+                if (
+                    grant["Grantee"]["Type"] == "CanonicalUser"
+                    and "DisplayName" in grant["Grantee"]
+                    and "All Users" in grant["Grantee"]["DisplayName"]
+                ):
+                    bucket_public = True
+        return bucket_public

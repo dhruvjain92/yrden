@@ -1,16 +1,15 @@
-import typer
-from core.assistant import *
+from core.assistant import confirm, speak, run, ask
 from core.commandcenter import Command_Center
 
 
 class Handler:
-    def __init__(self, mode, plugin_name, format):
+    def __init__(self, mode, plugin_name, format, output_file):
         if mode == "ir":
             speak("Running Incident Responder", "warning")
             self.start_ir_handler()
         elif mode == "plugin":
             speak("Running Plugin " + plugin_name, "warning")
-            self.start_plugin_handler(plugin_name, format)
+            self.start_plugin_handler(plugin_name, format, output_file)
         else:
             run("Invalid mode selected.")
 
@@ -35,9 +34,9 @@ class Handler:
         except Exception as e:
             run(e)
 
-    def start_plugin_handler(self, plugin_name, format):
+    def start_plugin_handler(self, plugin_name, format, output_file):
         commandcenter = Command_Center()
-        commandcenter.load_plugin(plugin_name, format)
+        commandcenter.load_plugin(plugin_name, format, output_file)
 
     def select_incident(self, incidents):
         speak("Available Incidents:")
