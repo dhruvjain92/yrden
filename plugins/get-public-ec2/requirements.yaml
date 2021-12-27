@@ -1,0 +1,6 @@
+---
+settings:
+  - name: ec2
+    type: string
+    display: Please mention your EC2 Instance (leave blank if you want to get all public EC2 information)
+    value: ""
