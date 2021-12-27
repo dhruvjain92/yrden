@@ -1,0 +1,6 @@
+---
+settings:
+  - name: bucketName
+    type: string
+    display: Please enter the bucket name
+    value: ""

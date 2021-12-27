@@ -1,7 +1,9 @@
 import boto3
 from datetime import datetime
+import botocore
 
 import typer
+from core.assistant import speak
 from core.configuration.config import check_test_mode
 import json
 
@@ -110,3 +112,32 @@ class AWS_Functions:
     def get_all_users(self, iam):
         paginator = iam.get_paginator("list_users")
         page_iterator = paginator.paginate()
+
+    def check_public_bucket(self, bucket_name):
+        client = boto3.client("s3")
+        bucket_public = False
+        try:
+            response = client.get_public_access_block(Bucket=bucket_name)
+            if not (
+                response["PublicAccessBlockConfiguration"]["BlockPublicAcls"]
+                and response["PublicAccessBlockConfiguration"]["BlockPublicPolicy"]
+            ):
+                bucket_public = True
+        except botocore.exceptions.ClientError as e:
+            bucket_public = False
+        if not bucket_public:
+            try:
+                response = client.get_bucket_policy_status(Bucket=bucket_name)
+                bucket_public = response["PolicyStatus"]["IsPublic"]
+            except botocore.exceptions.ClientError as e:
+                bucket_public = False
+        if not bucket_public:
+            grants = client.get_bucket_acl(Bucket=bucket_name).get("Grants")
+            for grant in grants:
+                if (
+                    grant["Grantee"]["Type"] == "CanonicalUser"
+                    and "DisplayName" in grant["Grantee"]
+                    and "All Users" in grant["Grantee"]["DisplayName"]
+                ):
+                    bucket_public = True
+        return bucket_public
