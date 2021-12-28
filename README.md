@@ -7,7 +7,13 @@ It is a Work In Progress and constantly been upgraded. It can be used for basic 
 
 ## Installation
 
-A proper setup file is in our roadmap. For current scenario, just clone the repo and start using. Make sure to give relevant file permissions to custom-scripts and yrden.py
+A proper setup file is in our roadmap. 
+
+For current scenario, just clone the repo,run pip and start using. Make sure to give relevant file permissions to custom-scripts and yrden.py
+
+```bash
+pip install -r requirements.txt
+```
 
     
 ## Usage/Examples
