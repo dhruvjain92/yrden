@@ -139,3 +139,11 @@ class AWS_Functions:
                 ):
                     bucket_public = True
         return bucket_public
+
+    def check_s3_versioning(self, bucket_name):
+        s3client = boto3.client("s3")
+        response = s3client.get_bucket_versioning(Bucket=bucket_name)
+        versioning_enabled = False
+        if "Status" in response and response["Status"] == "Enabled":
+            versioning_enabled = True
+        return versioning_enabled

@@ -48,8 +48,6 @@ class PlugCore:
                     self.PLUGIN_REQ = settings
                 except yaml.YAMLError as exc:
                     raise Exception(exc)
-        else:
-            speak("No requirements file")
 
     def show_all_plugins():
         speak("All PLugins")

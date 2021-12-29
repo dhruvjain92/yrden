@@ -5,7 +5,7 @@
 # Currently runs for 1 region for one profile
 # Based on the buckets size, this script may take a long time to run
 
-ENV="prod" # Target AWS Profile
+ENV="stage" # Target AWS Profile
 cd ..
 file_name=$(date -u +"%Y-%m-%dT%H:%M:%SZ"-"public-s3.txt")
 buckets_list=$(echo $ENV | python3 yrden.py --mode plugin --name public-s3 --format file --output-file $file_name)
