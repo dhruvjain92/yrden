@@ -92,6 +92,19 @@ Value can be read using
 self.get_req_value("variable_key") 
 ```
 
+**Pre and Post execution**
+Use the following functions for pre and post execution method.
+
+```python
+# You can override this function to change post execution steps in your plugin
+def post_execution(self):
+    speak("After execution is called")
+
+# You can override this function to change pre execution steps in your plugin
+def pre_execution(self):
+    speak("Before execution is called")
+```
+
 **Using AWS functions defined in AWS_Functions**
 
 Plugin can use some of the already created AWS Functions from our AWS_Functions file by using:
