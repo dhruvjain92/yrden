@@ -14,19 +14,13 @@ class public_s3(IPlugin):
         for bucket in s3.buckets.all():
             bucket_name = bucket.name
             if self.AWS.check_public_bucket(bucket_name):
-                if self.output_format == "file":
-                    buckets.append(bucket_name + "\n")
-                else:
-                    buckets.append(bucket_name)
-        if self.output_format == "file":
-            self.write_to_file(buckets)
-        elif self.output_format == "json":
-            speak(json.dumps(buckets, indent=2, sort_keys=True))
-        else:
-            output_table = PrettyTable()
-            output_table.field_names = ["Bucket Name"]
-            output_table.add_rows(buckets)
-            speak(output_table)
+                self.add_to_output(
+                    bucket_name,
+                    "AWS::S3",
+                    "This bucket is public",
+                    {},
+                    {"public_bucket": "true"},
+                )
 
     def description(self):
         return """This plugin finds the public S3 buckets

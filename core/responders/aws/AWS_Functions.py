@@ -1,6 +1,7 @@
 import boto3
 from datetime import datetime
 import botocore
+from botocore.config import Config
 import typer
 from core.configuration.config import check_test_mode
 import json
@@ -147,3 +148,75 @@ class AWS_Functions:
         if "Status" in response and response["Status"] == "Enabled":
             versioning_enabled = True
         return versioning_enabled
+
+    def check_s3_sse(self, bucket_name):
+        s3client = boto3.client("s3")
+        returnValue = False
+        try:
+            enc = s3client.get_bucket_encryption(Bucket=bucket_name)
+            rules = enc["ServerSideEncryptionConfiguration"]["Rules"]
+            if rules == "":
+                returnValue = False
+            else:
+                returnValue = True
+        except Exception as e:
+            returnValue = False
+        return returnValue
+
+    def check_s3_mfa_delete(self, bucket_name):
+        s3client = boto3.client("s3")
+        response = s3client.get_bucket_versioning(Bucket=bucket_name)
+        mfa_delete = False
+        if "MFADelete" in response and response["MFADelete"] == "Enabled":
+            mfa_delete = True
+        return mfa_delete
+
+    def check_s3_logging(self, bucket_name):
+        s3client = boto3.client("s3")
+        response = s3client.get_bucket_logging(Bucket=bucket_name)
+        logging_status = False
+        if "LoggingEnabled" in response:
+            logging_status = True
+        return logging_status
+
+    def check_s3_lifecycle(self, bucket_name):
+        s3client = boto3.client("s3")
+        lifecycle_configured = False
+        try:
+            response = s3client.get_bucket_lifecycle(Bucket=bucket_name)
+            if "Rules" in response:
+                lifecycle_configured = True
+        except Exception as e:
+            lifecycle_configured = False
+        return lifecycle_configured
+
+    def check_s3_website(self, bucket_name):
+        s3client = boto3.client("s3")
+        website_configured = False
+        try:
+            response = s3client.get_bucket_website(Bucket=bucket_name)
+            if "IndexDocument" in response:
+                website_configured = True
+        except Exception as e:
+            website_configured = False
+        return website_configured
+
+    def check_s3_object_lock_mode(self, bucket_name):
+        s3client = boto3.client("s3")
+        object_lock_configured = False
+        try:
+            response = s3client.get_object_lock_configuration(Bucket=bucket_name)
+            if (
+                "ObjectLockConfiguration" in response
+                and "ObjectLockEnabled" in response["ObjectLockConfiguration"]
+                and response["ObjectLockConfiguration"]["ObjectLockEnabled"]
+                == "Enabled"
+            ):
+                object_lock_configured = True
+        except Exception as e:
+            object_lock_configured = False
+        return object_lock_configured
+
+    # def check_transfer_accelaration(self,bucket_name):
+    #     try:
+    #         s3_client = boto3.client("s3", config=Config(s3={"use_accelerate_endpoint": True}))
