@@ -10,7 +10,6 @@ class public_elb(IPlugin):
     def execute(self):
         client = boto3.client("elb")
         elbs = client.describe_load_balancers().get("LoadBalancerDescriptions")
-        elb_list = []
         for elb in elbs:
             if elb["Scheme"] != "internal":
                 listeners = []
@@ -23,39 +22,17 @@ class public_elb(IPlugin):
                 listener_str = "-"
                 if len(listener) > 0:
                     listener_str = ", ".join(listeners)
-                if self.output_format == "json":
-                    elb_list.append(
-                        {
-                            "LoadBalancerName": elb["LoadBalancerName"],
-                            "DNSName": elb["DNSName"],
-                            "Listeners": listener_str,
-                            "ListenerPortReachable": listener_reachable,
-                        }
-                    )
-                elif self.output_format == "table":
-                    elb_list.append(
-                        [
-                            elb["LoadBalancerName"],
-                            elb["DNSName"],
-                            listener_str,
-                            listener_reachable,
-                        ]
-                    )
-        if self.output_format == "json":
-            speak(json.dumps(elb_list, indent=2, sort_keys=True))
-        elif self.output_format == "file":
-            self.write_to_file(elb_list)
-            speak("File with output: " + self.output_file, "info")
-        else:
-            output_table = PrettyTable()
-            output_table.field_names = [
-                "Load Balancer Name",
-                "DNS Name",
-                "Listeners",
-                "Listener Port Reachable",
-            ]
-            output_table.add_rows(elb_list)
-            speak(output_table)
+                self.add_to_output(
+                    elb["LoadBalancerName"],
+                    "AWS::ELB",
+                    "This ELB is public",
+                    {},
+                    {
+                        "dns_name": elb["DNSName"],
+                        "listeners": listener_str,
+                        "ListenerPortReachable": listener_reachable,
+                    },
+                )
 
     def check_port_open(self, target_url, port):
         speak("Checking port open for " + target_url + ": " + str(port))
@@ -67,7 +44,6 @@ class public_elb(IPlugin):
         if result_of_check == 0:
             speak("Port is open")
             is_port_open = True
-        speak("Check completed")
         return is_port_open
 
     def description(self):

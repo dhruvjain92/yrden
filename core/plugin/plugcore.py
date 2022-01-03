@@ -17,7 +17,7 @@ class PlugCore:
         self.PLUGIN = plugin_name
         self.OUTPUT_FORMAT = format
         self.AWS_PROFILE = profile
-        boto3.setup_default_session(profile_name=profile)
+        # boto3.setup_default_session(profile_name=profile)
         self.PLUGIN_DIR = self.PLUGIN_DIR + plugin_name + "/"
         self.REQ_FILE = self.PLUGIN_DIR + "requirements.yaml"
         self.OUTPUT_FILE = output_file
@@ -32,7 +32,9 @@ class PlugCore:
         speak(sel_plugin.description(), "warning")
         self.check_requirements()
         sel_plugin.set_req(self.PLUGIN_REQ)
+        sel_plugin.pre_execution()
         sel_plugin.execute()
+        sel_plugin.post_execution()
 
     def check_requirements(self):
         req_file = self.REQ_FILE
