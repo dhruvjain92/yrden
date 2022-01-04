@@ -6,13 +6,16 @@ from core.assistant import speak
 from core.plugin.pluginoutput import PluginOutput
 from core.responders.aws.AWS_Functions import AWS_Functions
 import boto3
+import sys
+import subprocess
+import pkg_resources
 
 
 class IPlugin(ABC):
     requirements = None
     output_format = "table"
     output_file = ""
-
+    aws_profile = ""
     output_content = []
 
     @abstractmethod
@@ -27,6 +30,7 @@ class IPlugin(ABC):
         self.requirements = req
         self.output_format = format
         self.AWS = AWS_Functions(profile)
+        self.aws_profile = profile
         self.output_file = output_file
         self.plugin_output = PluginOutput(format)
 
@@ -83,6 +87,8 @@ class IPlugin(ABC):
                 lines = lines + (",").join(row) + "\n"
             self.write_to_file(lines, ".csv")
             pl_output = "Written to" + "./output/" + self.output_file + ".csv"
+        elif self.output_format == None:
+            pl_output = None
         return pl_output
 
     def add_to_output(
@@ -104,8 +110,23 @@ class IPlugin(ABC):
     # Returns back the results on the basis of output format selection
     # You can override this function to change post execution steps in your plugin
     def post_execution(self):
-        speak(self.show_results())
+        results = self.show_results()
+        if not results == None:
+            speak(self.show_results())
 
     # You can override this function to change pre execution steps in your plugin
     def pre_execution(self):
         pass
+
+    def install_plugin_dependencies(self, pip_req_set):
+        speak("Installing missing dependencies...", "warning")
+        installed = {pkg.key for pkg in pkg_resources.working_set}
+        missing = pip_req_set - installed
+        if missing:
+            python = sys.executable
+            subprocess.check_call(
+                [python, "-m", "pip", "install", *missing], stdout=subprocess.DEVNULL
+            )
+            speak("Dependencies Installed!", "info")
+        else:
+            speak("Dependencies already Installed!", "info")

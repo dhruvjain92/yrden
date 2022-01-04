@@ -1,6 +1,6 @@
 from configobj import ConfigObj
 
-conf = ConfigObj("./core/configuration/config.ini")
+conf = ConfigObj("./config/config.ini")
 global_config = conf["global"]
 
 
