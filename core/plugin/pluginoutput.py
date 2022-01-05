@@ -14,14 +14,18 @@ class PluginOutput:
     output_object = []
 
     output_format = "json"
-    dict_format = {
-        "region": "",
-        "resource_type": "",
-        "resource_name": "",
-        "finding": "",
-        "additional_data": {},
-        "comments": {},
-    }
+
+    @property
+    def dict_format(self):
+        obj = {
+            "region": "",
+            "resource_type": "",
+            "resource_name": "",
+            "finding": "",
+            "additional_data": {},
+            "comments": {},
+        }
+        return obj
 
     def __init__(self, format):
         self.output_format = format

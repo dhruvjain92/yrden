@@ -31,35 +31,35 @@ class s3_analysis(IPlugin):
             else:
                 current_item["versioning"] = false_val
 
-            # # Checking if MFA Delete is Enabled
-            # if self.AWS.check_s3_mfa_delete(bucket_name):
-            #     current_item["mfa_delete"] = true_val
-            # else:
-            #     current_item["mfa_delete"] = false_val
+            # Checking if MFA Delete is Enabled
+            if self.AWS.check_s3_mfa_delete(bucket_name):
+                current_item["mfa_delete"] = true_val
+            else:
+                current_item["mfa_delete"] = false_val
 
-            # # Checking if logging is enabled
-            # if self.AWS.check_s3_logging(bucket_name):
-            #     current_item["logging"] = true_val
-            # else:
-            #     current_item["logging"] = true_val
+            # Checking if logging is enabled
+            if self.AWS.check_s3_logging(bucket_name):
+                current_item["logging"] = true_val
+            else:
+                current_item["logging"] = true_val
 
-            # # Check if lifecycle is configured
-            # if self.AWS.check_s3_lifecycle(bucket_name):
-            #     current_item["lifecycle"] = true_val
-            # else:
-            #     current_item["lifecycle"] = false_val
+            # Check if lifecycle is configured
+            if self.AWS.check_s3_lifecycle(bucket_name):
+                current_item["lifecycle"] = true_val
+            else:
+                current_item["lifecycle"] = false_val
 
-            # # Check if static website is configured
-            # if self.AWS.check_s3_website(bucket_name):
-            #     current_item["website"] = true_val
-            # else:
-            #     current_item["website"] = false_val
+            # Check if static website is configured
+            if self.AWS.check_s3_website(bucket_name):
+                current_item["website"] = true_val
+            else:
+                current_item["website"] = false_val
 
-            # # Check if bucket object lock is configured
-            # if self.AWS.check_s3_object_lock_mode(bucket_name):
-            #     current_item["object_lock"] = true_val
-            # else:
-            #     current_item["object_lock"] = false_val
+            # Check if bucket object lock is configured
+            if self.AWS.check_s3_object_lock_mode(bucket_name):
+                current_item["object_lock"] = true_val
+            else:
+                current_item["object_lock"] = false_val
 
             self.add_to_output(
                 bucket_name,
