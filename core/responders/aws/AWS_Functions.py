@@ -217,6 +217,9 @@ class AWS_Functions:
             object_lock_configured = False
         return object_lock_configured
 
+    def isolate_ec2(self, instance):
+        print("Isolate")
+
     # def check_transfer_accelaration(self,bucket_name):
     #     try:
     #         s3_client = boto3.client("s3", config=Config(s3={"use_accelerate_endpoint": True}))

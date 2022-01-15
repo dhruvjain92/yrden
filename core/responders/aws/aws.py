@@ -3,6 +3,7 @@ import importlib
 from importlib.util import find_spec
 import sys
 from core.assistant import *
+from core.configuration.config import get_config
 from core.incidents.IIResponse import IIResponse
 from core.responders.aws.AWS_Functions import AWS_Functions
 
@@ -19,7 +20,10 @@ class AWS_Responder:
         self.run_ir(instance)
 
     def set_profile(self):
-        self.AWS = AWS_Functions(ask("Select your AWS profile", "warning"))
+        profile = get_config("default_profile")
+        if profile == "":
+            profile = ask("Select your AWS profile", "warning")
+        self.AWS = AWS_Functions(profile)
 
     def run_ir(self, instance: IIResponse):
         self.ir_requirements(instance)
