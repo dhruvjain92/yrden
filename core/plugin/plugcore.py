@@ -1,3 +1,4 @@
+from core.configuration.config import get_config
 from core.plugin.IPlugin import IPlugin
 from core.assistant import speak, ask
 import importlib
@@ -33,7 +34,11 @@ class PlugCore:
         self.check_requirements()
         sel_plugin.set_req(self.PLUGIN_REQ)
         sel_plugin.pre_execution()
-        sel_plugin.execute()
+        regions = self.get_regions()
+        for region in regions:
+            speak("Setting region to "+ region)
+            boto3.setup_default_session(region_name=region,profile_name=self.AWS_PROFILE)
+            sel_plugin.execute()
         sel_plugin.post_execution()
 
     def check_requirements(self):
@@ -51,5 +56,9 @@ class PlugCore:
                 except yaml.YAMLError as exc:
                     raise Exception(exc)
 
-    def show_all_plugins():
+    def show_all_plugins(self):
         speak("All PLugins")
+
+    def get_regions(self):
+        regions_str = get_config("regions")
+        return regions_str.split(",")
