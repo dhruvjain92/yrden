@@ -1,0 +1,6 @@
+---
+settings:
+  - name: instanceId
+    type: string
+    display: Please enter the instance ID of the compromised instance
+    value: "" 

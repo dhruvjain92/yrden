@@ -1,6 +1,7 @@
 import yaml
 
 from core.assistant import ask
+from core.configuration.config import get_config
 from core.plugin.plugcore import PlugCore
 from core.responders.aws.aws import AWS_Responder
 
@@ -11,6 +12,9 @@ class Command_Center:
     AWS_PROVIDER = 1
     SELECTED_PROVIDER = -1
     IR_LIST = "./core/incidents/list.yaml"
+
+    def __init__(self):
+        self.SELECTED_PROVIDER = 1
 
     def select_available_provider(self, provider: int):
         if provider in (self.AZURE_PROVIDER, self.AWS_PROVIDER):
@@ -40,7 +44,9 @@ class Command_Center:
 
     def load_plugin(self, plugin_name: str, format: str, output_file: str):
         plugin_arr = plugin_name.split(",")
-        profile = ask("Select your AWS profile", "warning")
+        profile = get_config("default_profile")
+        if profile == "":
+            profile = ask("Select your AWS profile", "warning")
         for plugin in plugin_arr:
             plugcore = PlugCore(plugin, format, profile, output_file)
             plugcore.load_plugin()

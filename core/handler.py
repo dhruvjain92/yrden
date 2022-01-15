@@ -19,16 +19,17 @@ class Handler:
                 "We are happy and sad to see you here. Hopefully this is just a drill.",
                 "info",
             )
-            cloud_provider = int(
-                ask(
-                    "Select your cloud provider:\n 1. AWS \n 2. Azure\nSelect Option(1 or 2)"
-                )
-            )
             commandcenter = Command_Center()
-            if commandcenter.select_available_provider(cloud_provider) == -1:
-                raise Exception("Improper input")
-            if cloud_provider == commandcenter.AZURE_PROVIDER:
-                run("We haven't implemented Azure functionality yet.")
+            # We have discarded azure for now. So no need to check for cloud provider
+            # cloud_provider = int(
+            #     ask(
+            #         "Select your cloud provider:\n 1. AWS \n 2. Azure\nSelect Option(1 or 2)"
+            #     )
+            # )
+            # if commandcenter.select_available_provider(cloud_provider) == -1:
+            #     raise Exception("Improper input")
+            # if cloud_provider == commandcenter.AZURE_PROVIDER:
+            #     run("We haven't implemented Azure functionality yet.")
             incident = self.select_incident(commandcenter.get_available_incidents())
             commandcenter.select_incident(incident)
         except Exception as e:
