@@ -9,11 +9,22 @@ from prettytable import PrettyTable
 class public_elb(IPlugin):
     def execute(self):
         client = boto3.client("elb")
+        ec2_client = boto3.client("ec2")
         elbs = client.describe_load_balancers().get("LoadBalancerDescriptions")
         for elb in elbs:
+            public_sg = False
             if elb["Scheme"] != "internal":
                 listeners = []
                 listener_reachable = "No"
+                sg_info = ec2_client.describe_security_groups(
+                    GroupIds=elb["SecurityGroups"]
+                ).get("SecurityGroups")
+                for sg in sg_info:
+                    for perm in sg["IpPermissions"]:
+                        ranges = perm["IpRanges"]
+                        for ip_range in ranges:
+                            if "0.0.0.0" in ip_range["CidrIp"]:
+                                public_sg = True
                 for listener in elb["ListenerDescriptions"]:
                     port = listener["Listener"]["LoadBalancerPort"]
                     if self.check_port_open(elb["DNSName"], port):
@@ -31,6 +42,7 @@ class public_elb(IPlugin):
                         "dns_name": elb["DNSName"],
                         "listeners": listener_str,
                         "ListenerPortReachable": listener_reachable,
+                        "SG_Public": public_sg,
                     },
                 )
 
