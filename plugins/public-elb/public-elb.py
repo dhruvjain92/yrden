@@ -47,14 +47,12 @@ class public_elb(IPlugin):
                 )
 
     def check_port_open(self, target_url, port):
-        speak("Checking port open for " + target_url + ": " + str(port))
         is_port_open = False
         elb_socket_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         elb_socket_conn.settimeout(1)
         location = (target_url, port)
         result_of_check = elb_socket_conn.connect_ex(location)
         if result_of_check == 0:
-            speak("Port is open")
             is_port_open = True
         return is_port_open
 

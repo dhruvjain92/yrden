@@ -3,6 +3,7 @@ from core.plugin.IPlugin import IPlugin
 from core.assistant import speak
 import boto3
 from prettytable import PrettyTable
+import pprint
 
 
 class get_public_ec2(IPlugin):
@@ -13,7 +14,11 @@ class get_public_ec2(IPlugin):
             for instance in reservation["Instances"]:
                 if "PublicIpAddress" in instance:
                     self.add_to_output(
-                        instance["InstanceId"], "AWS::EC2", "Public EC2 Instance"
+                        instance["InstanceId"],
+                        "AWS::EC2",
+                        "Public EC2 Instance()",
+                        {},
+                        json.dumps(instance["Tags"]).replace(",", ";"),
                     )
 
     def description(self):

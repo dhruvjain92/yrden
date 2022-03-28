@@ -17,6 +17,7 @@ class IPlugin(ABC):
     output_file = ""
     aws_profile = ""
     output_content = []
+    ignore_regions = False
 
     @abstractmethod
     def execute(self):

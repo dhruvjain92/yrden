@@ -72,3 +72,7 @@ class s3_analysis(IPlugin):
     def description(self):
         return """This plugin analyzes the S3 buckets for security settings
         Created by: Dhruv Jain"""
+
+    def pre_execution(self):
+        self.ignore_regions = True
+        return super().pre_execution()
