@@ -88,10 +88,7 @@ class AWS_Functions:
         access_key_details["user_name"] = ""
         if not self.test_mode:
             iam = boto3.client("iam")
-            users = []
-            pages = self.get_all_users(iam)
-            for page in pages:
-                users = users + page["Users"]
+            users = self.get_all_users(iam)
             with typer.progressbar(users) as progress:
                 for sel_user in progress:
                     user = sel_user["UserName"]
@@ -110,7 +107,11 @@ class AWS_Functions:
 
     def get_all_users(self, iam):
         paginator = iam.get_paginator("list_users")
-        return paginator.paginate()
+        pages = paginator.paginate()
+        users = []
+        for page in pages:
+            users = users + page["Users"]
+        return users
 
     def check_public_bucket(self, bucket_name):
         client = boto3.client("s3")

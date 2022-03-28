@@ -35,3 +35,7 @@ class get_sensitive_files(IPlugin):
     def description(self):
         return """This plugin returns the probale sensitive files from specified S3 bucket
         Created by: Dhruv Jain"""
+
+    def pre_execution(self):
+        self.ignore_regions = True
+        return super().pre_execution()

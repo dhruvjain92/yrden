@@ -34,10 +34,15 @@ class PlugCore:
         self.check_requirements()
         sel_plugin.set_req(self.PLUGIN_REQ)
         sel_plugin.pre_execution()
-        regions = self.get_regions()
-        for region in regions:
-            speak("Setting region to "+ region)
-            boto3.setup_default_session(region_name=region,profile_name=self.AWS_PROFILE)
+        if sel_plugin.ignore_regions == False:
+            regions = self.get_regions()
+            for region in regions:
+                speak("Setting region to " + region)
+                boto3.setup_default_session(
+                    region_name=region, profile_name=self.AWS_PROFILE
+                )
+                sel_plugin.execute()
+        else:
             sel_plugin.execute()
         sel_plugin.post_execution()
 
