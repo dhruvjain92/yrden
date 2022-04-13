@@ -8,7 +8,7 @@ import re
 
 class get_sensitive_files(IPlugin):
 
-    SENSITIVE_EXTENSION_REGEX = "\.(xml|sql|bak|ini|conf|xls|doc|xlsx|xls)$"
+    SENSITIVE_EXTENSION_REGEX = "\.(xml|sql|bak|ini|conf|xls|doc|xlsx|xls|csv|txt)$"
 
     def execute(self):
         s3 = boto3.client("s3")

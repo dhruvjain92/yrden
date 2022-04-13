@@ -10,7 +10,6 @@ class public_s3(IPlugin):
         s3 = boto3.resource("s3")
         if self.output_format != "file":
             speak("Checking for Public Buckets", "warning")
-        buckets = []
         for bucket in s3.buckets.all():
             bucket_name = bucket.name
             if self.AWS.check_public_bucket(bucket_name):
