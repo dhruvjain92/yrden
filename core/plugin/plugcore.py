@@ -38,9 +38,15 @@ class PlugCore:
             regions = self.get_regions()
             for region in regions:
                 speak("Setting region to " + region)
-                boto3.setup_default_session(
-                    region_name=region, profile_name=self.AWS_PROFILE
+                # Set profile as empty in config if using EC2 role
+                if self.AWS_PROFILE == None:
+                    boto3.setup_default_session(
+                    region_name=region
                 )
+                else:
+                    boto3.setup_default_session(
+                        region_name=region, profile_name=self.AWS_PROFILE
+                    )
                 sel_plugin.execute()
         else:
             sel_plugin.execute()

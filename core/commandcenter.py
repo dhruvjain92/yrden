@@ -46,7 +46,7 @@ class Command_Center:
         plugin_arr = plugin_name.split(",")
         profile = get_config("default_profile")
         if profile == "":
-            profile = ask("Select your AWS profile", "warning")
+            profile = None
         for plugin in plugin_arr:
             plugcore = PlugCore(plugin, format, profile, output_file)
             plugcore.load_plugin()
